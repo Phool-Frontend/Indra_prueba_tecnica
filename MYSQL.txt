@@ -1,0 +1,28 @@
+identificador: database-indra  >>> solo es para ver en el html de la entrada
+usuario: admin
+contraseña: Nomejodas_123
+puerto: 3306
+nombre de la bd: mysql_pe
+
+
+database-indra.c6n2cymm66dk.us-east-1.rds.amazonaws.com
+3306
+
+
+>>>>>>>>>>>>>> funciona revisar: Cloud > aws > herramientas > 3_aws_rds_y_mongo > RDS - sin ec2.txt
+
+
+----------------- query para crear la tabla:
+CREATE TABLE appoPe (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    insuredId VARCHAR(50) NOT NULL,
+    scheduleId INT NOT NULL,
+    countryISO VARCHAR(2) NOT NULL
+)
+
+CREATE TABLE appoCl(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    insuredId VARCHAR(50) NOT NULL,
+    scheduleId INT NOT NULL,
+    countryISO VARCHAR(2) NOT NULL
+)

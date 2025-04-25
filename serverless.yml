@@ -1,0 +1,16 @@
+service: indra-api
+
+plugins:
+  - serverless-offline
+
+custom:
+  TablaDynamoName: "AppointmentTable"
+
+
+
+provider: ${file(scripts/provider.yml)}
+
+functions: ${file(scripts/functions.yml)}
+
+resources:
+  Resources: ${file(scripts/resources.yml)}

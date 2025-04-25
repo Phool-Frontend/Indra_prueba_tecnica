@@ -1,0 +1,121 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "INDRA",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://sz17fug5x1.execute-api.us-east-1.amazonaws.com/dev",
+      "description": "AWS Dev"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Citas",
+      "description": ""
+    }
+  ],
+  "paths": {
+    "/add": {
+      "post": {
+        "tags": ["Citas"],
+        "summary": "Create a new appointment",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Appointment"
+        },
+        "responses": {
+          "200": {
+            "description": "Appointment created"
+          }
+        }
+      }
+    },
+    "/appointment/{id}": {
+      "get": {
+        "tags": ["Citas"],
+        "summary": "Get appointment by ID",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointment details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointment": {
+      "get": {
+        "tags": ["Citas"],
+        "summary": "Get all appointments",
+        "responses": {
+          "200": {
+            "description": "List of appointments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Appointment"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Appointment": {
+        "type": "object",
+        "properties": {
+          "insuredId": {
+            "type": "string"
+          },
+          "scheduleId": {
+            "type": "integer"
+          },
+          "countryISO": {
+            "type": "string",
+            "enum": ["PE", "CL"]
+          }
+        }
+      }
+    },
+    "parameters": {
+      "idParam": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "requestBodies": {
+      "Appointment": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Appointment"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+swaggerUI:
+  handler: build/handlers/docs/swagger.handler
+  events:
+    - http:
+        path: /docs
+        method: get
+
+listAppo:
+  handler: build/handlers/ListAppo.handler
+  description: Listara todos los items de appointment_Dynamo
+  events:
+    - http:
+        path: /appointment
+        method: get
+
+getAppoById:
+  handler: build/handlers/GetAppoById.handler
+  description: Trae item de appointment_Dynamo por id (ya lo hace)
+  events:
+    - http:
+        path: /appointment/{appoId}
+        method: get
+
+
+insertAndUpdate:
+  handler: build/handlers/InsertAndUpdate.handler
+  events:
+    - http:
+        path: /add
+        method: post
+    - sqs:
+        arn: !GetAtt SqsArcangel.Arn
+        batchSize: 1
+  environment:
+    SNS_TOPIC_ARN: arn:aws:sns:${aws:region}:${aws:accountId}:${self:service}-${self:provider.stage}-topic
+
+
+citaPe:
+  handler: build/handlers/CitaPe.handler
+  description: Terminado
+  events:
+    - sqs:
+        arn: !GetAtt SqsPe.Arn
+        batchSize: 1
+
+citaCl:
+  handler: build/handlers/CitaCl.handler
+  description: Terminado
+  events:
+    - sqs:
+        arn: !GetAtt sqsCl.Arn
+        batchSize: 1

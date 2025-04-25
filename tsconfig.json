@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",//Agrega para la validacion con zod
+    "moduleResolution": "NodeNext",//Agrega para la validacion con zod
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "./build",//Donde se compilara
+    "rootDir": "./src",//Loa agrego como root del proyecto
+  }
+}

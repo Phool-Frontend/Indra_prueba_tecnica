@@ -1,0 +1,141 @@
+    # Definición del SNS Topic
+    SnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${self:provider.stage}-topic
+
+    # Definición de SQS1
+    SqsPe:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-sqsPe
+
+    # Definición de SQS2
+    sqsCl:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-sqsCl
+
+    # Definición de SQS Arcangel
+    SqsArcangel:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-arcangel
+        VisibilityTimeout: 300  # 5 minutos para procesamiento largo
+
+    # Regla de EventBridge
+    TriggerEventBridgeRule:
+      Type: AWS::Events::Rule
+      Properties:
+        Name: ${self:service}-${self:provider.stage}-arcangel-trigger
+        Description: "Trigger para mensajes completos hacia Arcangel"
+        EventPattern:
+          source:
+            - "phooldx.oneTramo"
+          detail-type:
+            - "StatusCompleto"
+        Targets:
+          - Arn: !GetAtt SqsArcangel.Arn
+            Id: "TargetSqsArcangel"
+
+    # Permiso para que EventBridge pueda enviar a Arcangel
+    SqsArcangelPolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues:
+          - Ref: SqsArcangel
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: "events.amazonaws.com"
+              Action: "sqs:SendMessage"
+              Resource: !GetAtt SqsArcangel.Arn
+
+    # Permiso para que SNS publique en SQS1
+    SqsPePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues:
+          - Ref: SqsPe
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action: sqs:SendMessage
+              Resource: 
+                Fn::GetAtt: [SqsPe, Arn]
+              Condition:
+                ArnEquals:
+                  aws:SourceArn: 
+                    Ref: SnsTopic
+
+    # Permiso para que SNS publique en SQS2
+    SqsClPolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues:
+          - Ref: sqsCl
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action: sqs:SendMessage
+              Resource: 
+                Fn::GetAtt: [sqsCl, Arn]
+              Condition:
+                ArnEquals:
+                  aws:SourceArn: 
+                    Ref: SnsTopic
+
+    # Suscripción de SQS1 al SNS
+    MiSqs1Subscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn:
+          Ref: SnsTopic
+        Protocol: sqs
+        Endpoint:
+          Fn::GetAtt:
+            - SqsPe
+            - Arn
+        FilterPolicy:
+          mensajeTipo:
+            - PE
+
+    # Suscripción de SQS2 al SNS
+    MiSqs2Subscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn:
+          Ref: SnsTopic
+        Protocol: sqs
+        Endpoint:
+          Fn::GetAtt:
+            - sqsCl
+            - Arn
+        FilterPolicy:
+          mensajeTipo:
+            - CL
+
+    #Tabla de dynamo
+    AppointmentTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.TablaDynamoName}
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
