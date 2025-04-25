@@ -3,8 +3,8 @@
 ## 📌 Overview
 API para gestión de citas médicas desplegada en AWS API Gateway.
 
-## 🔗 Base URL
-https://sz17fug5x1.execute-api.us-east-1.amazonaws.com/dev
+## 🔗 Swagger
+https://sz17fug5x1.execute-api.us-east-1.amazonaws.com/dev/docs
 
 
 ## 🚀 Endpoints
