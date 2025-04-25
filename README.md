@@ -52,11 +52,3 @@ curl -X GET "https://sz17fug5x1.execute-api.us-east-1.amazonaws.com/dev/appointm
 <sub>✨ Documentación generada automáticamente</sub>
 
 
-
-### Características:
-- ✅ Iconos visuales para mejor navegación
-- ✅ Tablas organizadas
-- ✅ Sintaxis markdown lista para GitHub/GitLab
-- ✅ Ejemplo de request/response
-- ✅ Detalles técnicos destacados
-- ✅ Formato responsive
